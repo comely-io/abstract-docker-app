@@ -240,10 +240,17 @@ class Dbs extends AuthAdminAPIController
         }
 
         set_time_limit(0);
-        header("Content-type: application/zip");
+        header("Content-type: application/octet-stream;");
         header("Content-Disposition: attachment; filename=" . $backup->db . "_" . date("d-m-Y_H:i", $backup->epoch) . ".zip");
         header("Pragma: no-cache");
         header("Expires: 0");
+
+        // Todo: Work in Progress
+
+//        $fp = fopen($backupFile->path(), "rb");
+//        $bytes = fread($fp, $backupFile->size() + 1);
+//        fclose($fp);
+//        print $bytes;
 
         readfile($backupFile->path());
         exit;
