@@ -8,6 +8,7 @@ use App\Common\Database\Primary\Users;
 use App\Common\Users\User;
 use App\Services\Public\Controllers\Session\AbstractSessionAPIController;
 use App\Services\Public\Exception\PublicAPIException;
+use Comely\Database\Schema;
 
 /**
  * Class AbstractAuthUserController
@@ -33,6 +34,7 @@ abstract class AbstractAuthUserController extends AbstractSessionAPIController
      * @throws PublicAPIException
      * @throws \App\Common\Exception\AppException
      * @throws \App\Common\Exception\AppModelNotFoundException
+     * @throws \Comely\Database\Exception\DatabaseException
      */
     final protected function sessionAPICallback(): void
     {
@@ -48,9 +50,14 @@ abstract class AbstractAuthUserController extends AbstractSessionAPIController
      * @throws PublicAPIException
      * @throws \App\Common\Exception\AppException
      * @throws \App\Common\Exception\AppModelNotFoundException
+     * @throws \Comely\Database\Exception\DatabaseException
      */
     private function authenticate(): void
     {
+        $db = $this->aK->db->primary();
+        Schema::Bind($db, 'App\Common\Database\Primary\Users');
+        Schema::Bind($db, 'App\Common\Database\Primary\Users\Profiles');
+
         if (!$this->session->authUserId) {
             throw new PublicAPIException('SESSION_AUTH_NA');
         }
