@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Common\PublicAPI;
 
 use App\Common\AppKernel;
+use App\Services\Public\Controllers\AbstractPublicAPIController;
 use Comely\Database\Queries\DbQueryExec;
 
 /**
@@ -29,10 +30,10 @@ class QueryPayload
 
     /**
      * @param Query $query
-     * @param PublicAPIController $controller
+     * @param AbstractPublicAPIController $controller
      * @param string|null $body
      */
-    public function __construct(Query $query, PublicAPIController $controller, ?string $body)
+    public function __construct(Query $query, AbstractPublicAPIController $controller, ?string $body)
     {
         $aK = AppKernel::getInstance();
         $this->query = $query->id;
