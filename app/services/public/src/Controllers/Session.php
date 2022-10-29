@@ -9,5 +9,7 @@ namespace App\Services\Public\Controllers;
  */
 class Session extends AbstractPublicAPIController
 {
-
+    protected function publicAPICallback(): void
+    {
+    }
 }
