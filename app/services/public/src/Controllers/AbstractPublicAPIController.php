@@ -311,4 +311,12 @@ abstract class AbstractPublicAPIController extends AbstractAppController
     protected function onFinish(): void
     {
     }
+
+    /**
+     * @return string
+     */
+    final protected function getAccessAppDeviceType(): string
+    {
+        return "web";
+    }
 }
