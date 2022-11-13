@@ -148,6 +148,7 @@ abstract class AbstractPublicAPIController extends AbstractAppController
         // Seed the Query Log
         try {
             $this->queryLog = new Query();
+            $this->queryLog->id = 0;
             $this->queryLog->set("checksum", "tba");
             $this->queryLog->ipAddress = $this->ipAddress;
             $this->queryLog->method = $this->request->method->toString();
@@ -210,6 +211,8 @@ abstract class AbstractPublicAPIController extends AbstractAppController
 
                 $publicAPIService->errors->triggerIfDebug($e, E_USER_WARNING);
             }
+
+            print $buffered;
         });
     }
 
