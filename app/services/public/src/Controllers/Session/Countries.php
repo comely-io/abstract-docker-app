@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Services\Public\Controllers\Session;
 
 use App\Common\Countries\CachedCountriesList;
+use Comely\Database\Schema;
 
 /**
  * Class Countries
@@ -11,8 +12,14 @@ use App\Common\Countries\CachedCountriesList;
  */
 class Countries extends AbstractSessionAPIController
 {
+    /**
+     * @return void
+     * @throws \Comely\Database\Exception\DbConnectionException
+     */
     protected function sessionAPICallback(): void
     {
+        $db = $this->aK->db->primary();
+        Schema::Bind($db, 'App\Common\Database\Primary\Countries');
     }
 
     /**
