@@ -33,5 +33,10 @@ class Countries extends AbstractSessionAPIController
 
         $this->status(true);
         $this->response->set("countries", $countriesList);
+
+        $cfIpCountry = $this->request->headers->get("HTTP_CF_IPCOUNTRY");
+        if ($cfIpCountry) {
+            $this->response->set("location", $cfIpCountry);
+        }
     }
 }
