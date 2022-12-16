@@ -103,6 +103,11 @@ abstract class AbstractPublicAPIController extends AbstractAppController
                 if ($param) {
                     $this->response->set("param", $param);
                 }
+
+                $data = $e->getData();
+                if ($data) {
+                    $this->response->set("errorData", $data);
+                }
             }
 
             if ($this->aK->isDebug()) {
