@@ -24,7 +24,7 @@ class PublicAPIException extends AppControllerException
      * @param string|int|null ...$data
      * @return static
      */
-    public static function Create(string $msg, ?string $param = null, int $code = 0, \Throwable $prev = null, null|string|int ...$data): static
+    public static function Create(string $msg, ?string $param = null, int $code = 0, \Throwable $prev = null, ?array $data = null): static
     {
         $pex = new self($msg, $code, $prev);
         $pex->param = $param;
@@ -66,7 +66,7 @@ class PublicAPIException extends AppControllerException
      * @param string|int ...$data
      * @return $this
      */
-    public function setData(string|int ...$data): self
+    public function setData(array $data): self
     {
         $this->data = $data;
         return $this;

@@ -105,11 +105,7 @@ abstract class AbstractPublicAPIController extends AbstractAppController
                 }
 
                 $data = $e->getData();
-                if ($data) {
-                    if (isset($data["data"])) {
-                        $this->response->set("errorData", $data["data"]);
-                    }
-                }
+                $this->response->set("errorData", $data);
             }
 
             if ($this->aK->isDebug()) {
