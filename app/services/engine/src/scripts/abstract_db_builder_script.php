@@ -36,6 +36,7 @@ abstract class abstract_db_builder_script extends AbstractCLIScript
             'App\Common\Database\Primary\Countries',
             'App\Common\Database\Primary\Users\Groups',
             'App\Common\Database\Primary\Users',
+            'App\Common\Database\Primary\Users\Logs',
             'App\Common\Database\Primary\Users\Profiles',
             'App\Common\Database\Primary\Users\Baggage',
         ]);

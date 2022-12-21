@@ -29,6 +29,9 @@ class app_daemon extends AbstractCLIScript
     /** @var SystemConfig */
     private SystemConfig $systemConfig;
 
+    /**
+     * @return void
+     */
     public function exec(): void
     {
         parent::exec(); // inheritance call for Sempahore process locking
@@ -132,7 +135,7 @@ class app_daemon extends AbstractCLIScript
                 $dbCred->dbname . " > " . $filename . ".sql";
 
             exec($backupCmd, result_code: $dumpResultCode);
-            if ($dumpResultCode !== 0) {
+            if ($dumpResultCode != 0) {
                 throw new \RuntimeException('Failed to generate MySQL dump');
             }
 
@@ -143,7 +146,7 @@ class app_daemon extends AbstractCLIScript
 
             $archiveCmd .= $filename . ".zip " . $filename . ".sql";
             exec($archiveCmd, result_code: $zipCode);
-            if ($zipCode !== 0) {
+            if ($zipCode != 0) {
                 throw new \RuntimeException('Failed to create compressed archive of MySQL dump');
             }
 
@@ -321,7 +324,12 @@ class app_daemon extends AbstractCLIScript
         $this->inline("Purging {magenta}Users Log{/} ");
         if ($this->systemConfig->usersLogsPurge > 0) {
             $this->inline(sprintf("older than {green}{invert} %d {/} days:", $this->systemConfig->usersLogsPurge));
-            $this->print("\t {red}{invert} TODO {/}.");
+            $query = $db->exec(
+                sprintf("DELETE " . "FROM `%s` WHERE `time_stamp`<=?", \App\Common\Database\Primary\Users\Logs::TABLE),
+                [$timeStamp - ($this->systemConfig->usersLogsPurge * 86400)]
+            );
+
+            $this->print("\t {cyan}{invert} " . $query->rows() . " {/}.");
         } else {
             $this->print("... {red}Disabled{/}");
         }
