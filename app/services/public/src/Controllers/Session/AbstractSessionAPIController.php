@@ -178,18 +178,10 @@ abstract class AbstractSessionAPIController extends AbstractPublicAPIController
     }
 
     /**
-     * @return string
-     */
-    final protected function getAccessAppDeviceType(): string
-    {
-        return "web";
-    }
-
-    /**
      * @return bool
      * @throws \App\Common\Exception\AppException
      */
-    final public function isReCaptchaRequired(): bool
+    final protected function isReCaptchaRequired(): bool
     {
         if ($this->session->type !== "web") {
             return false;
