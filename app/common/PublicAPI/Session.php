@@ -7,6 +7,7 @@ use App\Common\Database\AbstractAppModel;
 use App\Common\Database\PublicAPI\Sessions;
 use App\Common\Exception\AppException;
 use App\Common\Security;
+use App\Common\Users\User;
 use Comely\Buffer\Buffer;
 
 /**
@@ -72,5 +73,22 @@ class Session extends AbstractAppModel
             $this->aK->errors->triggerIfDebug($e);
             throw new AppException(sprintf('Failed to compute public API session %d checksum', $this->id));
         }
+    }
+
+    /**
+     * @param User $user
+     * @param bool $otpChecked
+     * @return void
+     * @throws AppException
+     */
+    public function authenticateAs(User $user, bool $otpChecked = false): void
+    {
+        if ($this->authUserId) {
+            throw new AppException('Cannot re-authenticate a session');
+        }
+
+        $this->authUserId = $user->id;
+        $this->authSessionOtp = $otpChecked ? 1 : 0;
+        $this->set("checksum", $this->checksum()->raw());
     }
 }

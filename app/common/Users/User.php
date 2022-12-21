@@ -7,6 +7,7 @@ use App\Common\Database\AbstractAppModel;
 use App\Common\Database\Primary\Users;
 use App\Common\Exception\AppException;
 use App\Common\Kernel\ErrorHandler\Errors;
+use App\Common\PublicAPI\Session;
 use App\Common\Security;
 use App\Common\Validator;
 use Comely\Buffer\Buffer;
@@ -406,5 +407,23 @@ class User extends AbstractAppModel
             // Profile
             $cache->delete(sprintf("u_prf_%d", $this->id));
         }
+    }
+
+    /**
+     * @param Session $session
+     * @param string $hmacSecret
+     * @return void
+     */
+    public function authenticateSession(Session $session, string $hmacSecret): void
+    {
+        if ($session->authUserId !== $this->id) {
+            throw new \RuntimeException('Authenticate session model with user model first');
+        }
+
+        if (strlen($hmacSecret) !== 16) {
+            throw new \RuntimeException('HMAC secret for session must be 16 bytes');
+        }
+
+        $this->set($session->type . "AuthToken", $session->private("token") . $hmacSecret);
     }
 }
