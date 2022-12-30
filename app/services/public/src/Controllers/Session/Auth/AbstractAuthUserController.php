@@ -5,6 +5,8 @@ namespace App\Services\Public\Controllers\Session\Auth;
 
 use App\Common\AppConstants;
 use App\Common\Database\Primary\Users;
+use App\Common\Exception\AppException;
+use App\Common\Users\Log;
 use App\Common\Users\User;
 use App\Services\Public\Controllers\Session\AbstractSessionAPIController;
 use App\Services\Public\Exception\PublicAPIException;
@@ -56,6 +58,7 @@ abstract class AbstractAuthUserController extends AbstractSessionAPIController
     {
         $db = $this->aK->db->primary();
         Schema::Bind($db, 'App\Common\Database\Primary\Users');
+        Schema::Bind($db, 'App\Common\Database\Primary\Users\Logs');
         Schema::Bind($db, 'App\Common\Database\Primary\Users\Profiles');
 
         if (!$this->session->authUserId) {
@@ -68,6 +71,10 @@ abstract class AbstractAuthUserController extends AbstractSessionAPIController
         // User status check
         if ($this->user->status !== "active") {
             throw new PublicAPIException('SESSION_AUTH_USER_DISABLED');
+        }
+
+        if ($this->user->archived !== 0) {
+            throw new PublicAPIException('SESSION_AUTH_USER_DELETED');
         }
 
         // Cross-check session IDs; (User may have logged in from elsewhere)
@@ -158,5 +165,23 @@ abstract class AbstractAuthUserController extends AbstractSessionAPIController
 
         $this->session->last2faOn = time();
         $this->session->last2faCode = $code;
+    }
+
+    /**
+     * @param string $message
+     * @param string|null $controller
+     * @param int|null $line
+     * @param array $flags
+     * @return \App\Common\Users\Log
+     * @throws \App\Services\Public\Exception\PublicAPIException
+     * @throws \Comely\Database\Exception\DatabaseException
+     */
+    final protected function userLogEntry(string $message, ?string $controller = null, ?int $line = null, array $flags = []): Log
+    {
+        try {
+            return Users\Logs::Insert($this->user, $this->ipAddress, $message, $controller, $line, $flags);
+        } catch (AppException $e) {
+            throw new PublicAPIException($e->getMessage(), $e->getCode());
+        }
     }
 }
