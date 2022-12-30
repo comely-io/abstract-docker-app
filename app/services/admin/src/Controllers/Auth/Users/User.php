@@ -263,7 +263,6 @@ class User extends AuthAdminAPIController
         $user->clearTags();
 
         if ($tags) {
-            $count = 0;
             foreach ($tags as $tag) {
                 if (!$tag) {
                     continue;
@@ -273,8 +272,7 @@ class User extends AuthAdminAPIController
                     throw new AdminAPIException('Invalid user tag');
                 }
 
-                $user->appendTag($tag, false);
-                $count++;
+                $user->appendTag($tag);
             }
         }
 
@@ -759,6 +757,7 @@ class User extends AuthAdminAPIController
                 }
 
                 $user->appendTag($addFlag);
+                $user->updateUserTagsInternal();
             }
         } catch (AdminAPIException $e) {
             $e->setParam("flag");
