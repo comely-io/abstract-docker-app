@@ -72,7 +72,7 @@ class User extends AbstractAppModel
      */
     public function onLoad(): void
     {
-        $this->_tags = explode(",", $this->private("tags") ?? "");
+        $this->_tags = explode(",", trim(trim($this->private("tags") ?? ""), ","));
         parent::onLoad();
 
         try {
@@ -204,7 +204,6 @@ class User extends AbstractAppModel
         $index = array_search(strtolower(trim($tag)), $this->_tags);
         if (is_int($index) && $index >= 0) {
             unset($this->_tags[$index]);
-            $this->updateUserTagsInternal();
             return true;
         }
 
@@ -213,18 +212,13 @@ class User extends AbstractAppModel
 
     /**
      * @param string $tag
-     * @param bool $updateInternalVar
      * @return bool
      */
-    public function appendTag(string $tag, bool $updateInternalVar = true): bool
+    public function appendTag(string $tag): bool
     {
         $tag = strtoupper(trim($tag));
         if (!$this->hasTag($tag)) {
             $this->_tags[] = $tag;
-            if ($updateInternalVar) {
-                $this->updateUserTagsInternal();
-            }
-
             return true;
         }
 
@@ -241,7 +235,7 @@ class User extends AbstractAppModel
             throw new \RuntimeException(sprintf('User %d account tags exceeding limit of 512 bytes', $this->id));
         }
 
-        $this->set("tags", $tagsStr);
+        $this->set("tags", trim($tagsStr, ","));
     }
 
     /**
