@@ -204,7 +204,7 @@ class User extends AbstractAppModel
      */
     public function deleteTag(string $tag): bool
     {
-        $index = array_search(strtolower(trim($tag)), $this->_tags);
+        $index = array_search(strtolower(trim($tag)), array_map("strtolower", $this->_tags));
         if (is_int($index) && $index >= 0) {
             unset($this->_tags[$index]);
             return true;
