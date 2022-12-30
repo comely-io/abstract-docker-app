@@ -115,6 +115,9 @@ class User extends AbstractAppModel
         $this->archived = $this->archived === 1 ? 1 : 0;
         $this->emailVerified = $this->emailVerified === 1 ? 1 : 0;
         $this->phoneVerified = $this->phoneVerified === 1 ? 1 : 0;
+
+        // Fix user tags
+        $this->updateUserTagsInternal();
     }
 
     /**
