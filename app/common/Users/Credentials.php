@@ -17,6 +17,8 @@ class Credentials
     private ?string $password = null;
     /** @var string|null */
     private ?string $googleAuthSeed = null;
+    /** @var string|null */
+    private ?string $browserFingerprint = null;
 
     /**
      * @param User $user
@@ -77,5 +79,26 @@ class Credentials
 
         $gA = new GoogleAuthenticator($this->googleAuthSeed);
         return $gA->verify($code);
+    }
+
+    /**
+     * @param string $fp
+     * @return void
+     */
+    public function setBrowserFingerprint(string $fp): void
+    {
+        if (strlen($fp) !== 32) {
+            throw new \RuntimeException('Fingerprint must be 32 bytes');
+        }
+
+        $this->browserFingerprint = $fp;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getBrowserFingerprint(): ?string
+    {
+        return $this->browserFingerprint;
     }
 }
