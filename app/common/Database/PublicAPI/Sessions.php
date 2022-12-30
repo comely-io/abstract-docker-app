@@ -33,6 +33,8 @@ class Sessions extends AbstractAppTable
         $cols->int("archived")->bytes(1)->unSigned()->default(0);
         $cols->binary("token")->fixed(32)->unique();
         $cols->string("ip_address")->length(45);
+        $cols->string("user_agent")->length(1024);
+        $cols->binary("fingerprint")->fixed(32);
         $cols->int("auth_user_id")->bytes(4)->unSigned()->nullable();
         $cols->int("auth_session_otp")->bytes(1)->unSigned()->nullable();
         $cols->string("last_2fa_code")->fixed(6)->nullable();

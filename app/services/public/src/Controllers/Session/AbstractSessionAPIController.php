@@ -129,6 +129,16 @@ abstract class AbstractSessionAPIController extends AbstractPublicAPIController
             throw new PublicAPIException('SESSION_RETRIEVE_ERROR');
         }
 
+        // Validate Fingerprint
+        $fingerprint = $this->httpHeaderAuth[strtolower(AppConstants::PUBLIC_API_HEADER_FINGERPRINT)] ?? null;
+        if (!$fingerprint || !preg_match('/^[a-f0-9]{64}$/', $fingerprint)) {
+            throw new PublicAPIException('FINGERPRINT_ERROR');
+        }
+
+        if (hex2bin($fingerprint) !== $session->fingerprint) {
+            throw new PublicAPIException('SESSION_FINGERPRINT_ERROR');
+        }
+
         // Validate Checksum
         if ($session->checksum()->raw() !== $session->private("checksum")) {
             throw new PublicAPIException('SESSION_CHECKSUM_FAIL');

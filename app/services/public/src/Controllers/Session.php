@@ -5,6 +5,7 @@ namespace App\Services\Public\Controllers;
 
 use App\Common\AppConstants;
 use App\Common\Database\PublicAPI\Sessions;
+use App\Common\Validator;
 use App\Services\Public\Exception\PublicAPIException;
 use Comely\Database\Schema;
 use Comely\Security\PRNG;
@@ -26,6 +27,25 @@ class Session extends AbstractPublicAPIController
     }
 
     /**
+     * @return string
+     * @throws \App\Services\Public\Exception\PublicAPIException
+     */
+    private function validatedUserAgent(): string
+    {
+        $userAgent = $this->userClient->userAgent;
+        if (!$userAgent) {
+            throw new PublicAPIException('No user-agent header received');
+        }
+
+        $userAgent = substr($userAgent, 0, 1024); // Trim to max size of 1KB
+        if (!Validator::isValidUserAgent($userAgent)) {
+            throw new PublicAPIException('Invalid user agent');
+        }
+
+        return $userAgent;
+    }
+
+    /**
      * @return void
      * @throws PublicAPIException
      * @throws \App\Common\Exception\AppException
@@ -37,6 +57,11 @@ class Session extends AbstractPublicAPIController
         $sessionToken = $this->httpHeaderAuth[strtolower(AppConstants::PUBLIC_API_HEADER_SESS_TOKEN)] ?? null;
         if ($sessionToken) {
             throw new PublicAPIException("SESSION_TOKEN_EXISTS");
+        }
+
+        $fingerprint = $this->httpHeaderAuth[strtolower(AppConstants::PUBLIC_API_HEADER_FINGERPRINT)] ?? null;
+        if (!$fingerprint || !preg_match('/^[a-f0-9]{64}$/', $fingerprint)) {
+            throw new PublicAPIException('FINGERPRINT_ERROR');
         }
 
         $timeStamp = time();
@@ -57,6 +82,8 @@ class Session extends AbstractPublicAPIController
         $session->archived = 0;
         $session->set("token", $secureEntropy);
         $session->ipAddress = $this->ipAddress;
+        $session->userAgent = $this->validatedUserAgent();
+        $session->fingerprint = hex2bin($fingerprint);
         $session->issuedOn = $timeStamp;
         $session->lastUsedOn = $timeStamp;
         $session->query()->insert();

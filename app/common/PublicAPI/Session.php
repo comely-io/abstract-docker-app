@@ -29,6 +29,10 @@ class Session extends AbstractAppModel
     public int $archived;
     /** @var string */
     public string $ipAddress;
+    /** @var string */
+    public string $userAgent;
+    /** @var string */
+    public string $fingerprint;
     /** @var int|null */
     public ?int $authUserId = null;
     /** @var int|null */

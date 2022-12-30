@@ -24,4 +24,6 @@ interface AppConstants
     public const PUBLIC_API_HEADER_SESS_TOKEN = "api-token";
     /** @var string */
     public const PUBLIC_API_HEADER_CLIENT_SIGN = "user-signature";
+    /** @var string */
+    public const PUBLIC_API_HEADER_FINGERPRINT = "browser-fingerprint";
 }
