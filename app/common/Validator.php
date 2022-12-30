@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Common;
 
+use App\Common\Exception\AppException;
 use Comely\Security\Passwords;
 use Comely\Utils\UTF8\UTF8Charset;
 use Comely\Utils\Validator\ASCII_Validator;
@@ -231,6 +232,19 @@ class Validator
     public static function getType(mixed $val): string
     {
         return is_object($val) ? get_class($val) : gettype($val);
+    }
+
+    /**
+     * @param mixed $val
+     * @return bool
+     */
+    public static function isValidUserAgent(mixed $val): bool
+    {
+        if (!is_string($val) || !$val) {
+            return false;
+        }
+
+        return (bool)preg_match('/^[\w\-]+\/([0-9]+(\.[0-9]+)?)\s\(.*\)?$/i', $val);
     }
 
     /**
