@@ -169,17 +169,16 @@ abstract class AbstractAuthUserController extends AbstractSessionAPIController
 
     /**
      * @param string $message
-     * @param string|null $controller
-     * @param int|null $line
      * @param array $flags
+     * @param string|null $data
      * @return \App\Common\Users\Log
      * @throws \App\Services\Public\Exception\PublicAPIException
      * @throws \Comely\Database\Exception\DatabaseException
      */
-    final protected function userLogEntry(string $message, ?string $controller = null, ?int $line = null, array $flags = []): Log
+    final protected function userLogEntry(string $message, array $flags = [], ?string $data = null): Log
     {
         try {
-            return Users\Logs::Insert($this->user, $this->ipAddress, $message, $controller, $line, $flags);
+            return Users\Logs::Insert($this->user, $this->session, $this->ipAddress, $message, $data, $flags);
         } catch (AppException $e) {
             throw new PublicAPIException($e->getMessage(), $e->getCode());
         }

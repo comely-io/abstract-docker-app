@@ -19,10 +19,12 @@ class Log extends AbstractAppModel
     public int $id;
     /** @var int */
     public int $user;
+    /** @var int */
+    public int $session;
     /** @var string|null|array */
     public null|string|array $flags;
     /** @var string|null */
-    public ?string $controller;
+    public ?string $data;
     /** @var string */
     public string $log;
     /** @var string */

@@ -7,6 +7,7 @@ use App\Common\AppKernel;
 use App\Common\Database\AbstractAppTable;
 use App\Common\Database\Primary\Users;
 use App\Common\Exception\AppException;
+use App\Common\PublicAPI\Session;
 use App\Common\Users\Log;
 use App\Common\Users\User;
 use Comely\Database\Schema\Table\Columns;
@@ -32,9 +33,10 @@ class Logs extends AbstractAppTable
 
         $cols->int("id")->bytes(4)->unSigned()->autoIncrement();
         $cols->int("user")->bytes(4)->unSigned();
+        $cols->int("session")->bytes(8)->unSigned();
         $cols->string("flags")->length(255)->nullable();
-        $cols->string("controller")->length(255)->nullable();
         $cols->string("log")->length(255);
+        $cols->string("data")->length(1024)->nullable(); // Arbitrary data field
         $cols->string("ip_address")->length(45);
         $cols->int("time_stamp")->bytes(4)->unSigned();
         $cols->primaryKey("id");
@@ -42,23 +44,24 @@ class Logs extends AbstractAppTable
         $constraints->foreignKey("user")->table(Users::TABLE, "id");
     }
 
+
     /**
-     * @param User $user
+     * @param \App\Common\Users\User $user
+     * @param \App\Common\PublicAPI\Session $session
      * @param string $ipAddress
      * @param string $message
-     * @param string|null $controller
-     * @param int|null $line
+     * @param string|null $data
      * @param array $flags
-     * @return Log
-     * @throws AppException
+     * @return \App\Common\Users\Log
+     * @throws \App\Common\Exception\AppException
      * @throws \Comely\Database\Exception\DatabaseException
      */
     public static function Insert(
         User    $user,
+        Session $session,
         string  $ipAddress,
         string  $message,
-        ?string $controller = null,
-        ?int    $line = null,
+        ?string $data = null,
         array   $flags = []
     ): Log
     {
@@ -87,8 +90,8 @@ class Logs extends AbstractAppTable
             }
         }
 
-        if ($controller && $line) {
-            $controller = $controller . "#" . $line;
+        if (is_string($data) && strlen($data) > 1024) {
+            throw new AppException('User log arbitrary data exceeds maximum of 1024 bytes');
         }
 
         $db = AppKernel::getInstance()->db->primary();
@@ -97,9 +100,10 @@ class Logs extends AbstractAppTable
         $log = new Log();
         $log->id = 0;
         $log->user = $user->id;
+        $log->session = $session->id;
         $log->flags = $logFlags;
-        $log->controller = $controller;
         $log->log = $message;
+        $log->data = $data;
         $log->ipAddress = $ipAddress;
         $log->timeStamp = time();
         $log->query()->insert();
