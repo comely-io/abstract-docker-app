@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Common\Users;
 
+use Comely\Utils\OOP\Traits\NoDumpTrait;
+
 /**
  * Class UserParams
  * @package App\Common\Users
@@ -13,6 +15,8 @@ class UserParams
     public readonly int $userId;
     /** @var string|null */
     private ?string $secureData = null;
+
+    use NoDumpTrait;
 
     /**
      * @param User $user

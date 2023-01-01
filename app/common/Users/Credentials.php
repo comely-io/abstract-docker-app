@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Common\Users;
 
 use App\Common\Packages\GoogleAuth\GoogleAuthenticator;
+use Comely\Utils\OOP\Traits\NoDumpTrait;
 
 /**
  * Class Credentials
@@ -19,6 +20,10 @@ class Credentials
     private ?string $googleAuthSeed = null;
     /** @var string|null */
     private ?string $browserFingerprint = null;
+    /** @var \App\Common\Users\RecoveryCodes|null */
+    public ?RecoveryCodes $recoveryCodes = null;
+
+    use NoDumpTrait;
 
     /**
      * @param User $user
