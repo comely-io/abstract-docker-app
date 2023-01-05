@@ -34,10 +34,10 @@ class MailConfig extends AbstractDataStoreObject
     public ?string $password = null;
     /** @var null|string */
     public ?string $serverName = null;
-    /** @var null|string */
-    public ?string $apiKey = null;
-    /** @var null|string */
-    public ?string $apiBaggageOne = null;
-    /** @var null|string */
-    public ?string $apiBaggageTwo = null;
+    /** @var string|null */
+    public ?string $mgApiKey = null;
+    /** @var string|null */
+    public ?string $mgApiDomain = null;
+    /** @var bool|null */
+    public ?bool $mgEurope = null;
 }

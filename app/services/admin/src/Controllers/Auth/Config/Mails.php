@@ -130,8 +130,7 @@ class Mails extends AuthAdminAPIController
                 $this->setupSMTP($changes);
                 break;
             case MailService::MAILGUN:
-            case MailService::SENDGRID:
-                $this->setupMailVendor($changes);
+                $this->setupMailGun($changes);
                 break;
             default: // Do nothing further
                 break;
@@ -281,11 +280,11 @@ class Mails extends AuthAdminAPIController
      * @throws AdminAPIException
      * @throws AppException
      */
-    private function setupMailVendor(int &$changes): void
+    private function setupMailGun(int &$changes): void
     {
         // API Key
         try {
-            $apiKey = $this->input()->getASCII("apiKey");
+            $apiKey = $this->input()->getASCII("mgApiKey");
             $apiKeyLen = strlen($apiKey);
             if (!$apiKey) {
                 throw new AdminAPIException('API key is required');
@@ -293,34 +292,46 @@ class Mails extends AuthAdminAPIController
                 throw new AdminAPIException('API key must be between 8 and 64 bytes long');
             }
         } catch (AdminAPIException $e) {
-            $e->setParam("apiKey");
+            $e->setParam("mgApiKey");
             throw $e;
         }
 
-        if ($this->mailConfig->setValue("apiKey", $apiKey)) {
+        if ($this->mailConfig->setValue("mgApiKey", $apiKey)) {
             $changes++;
         }
 
-        // Baggage
-        foreach (["One", "Two"] as $baggageNum) {
-            $baggageField = "apiBaggage" . $baggageNum;
-
-            try {
-                $baggageValue = $this->input()->getASCII($baggageField);
-                if ($baggageValue) {
-                    $baggageLen = strlen($baggageValue);
-                    if ($baggageLen > 128) {
-                        throw new AdminAPIException('API baggage field cannot exceed 128 bytes');
-                    }
-                }
-            } catch (AdminAPIException $e) {
-                $e->setParam($baggageField);
-                throw $e;
+        // Domain
+        try {
+            $apiDomain = strtolower($this->input()->getASCII("mgApiDomain"));
+            if (!$apiDomain) {
+                throw new AdminAPIException('MailGun user domain is required');
+            } elseif (!Validator::isValidHostname($apiDomain)) {
+                throw new AdminAPIException('Invalid MailGun user domain name');
+            } elseif (str_starts_with($apiDomain, "www.")) {
+                throw new AdminAPIException('MailGun user domain cannot begin with "www."');
             }
+        } catch (AdminAPIException $e) {
+            $e->setParam("mgApiDomain");
+            throw $e;
+        }
 
-            if ($this->mailConfig->setValue($baggageField, $baggageValue)) {
-                $changes++;
+        if ($this->mailConfig->setValue("mgApiDomain", $apiDomain)) {
+            $changes++;
+        }
+
+        // API Region
+        try {
+            $apiRegion = strtolower($this->input()->getASCII("mgApiRegion"));
+            if (!in_array($apiRegion, ["us", "eu"])) {
+                throw new AdminAPIException('Invalid MailGun API server region');
             }
+        } catch (AdminAPIException $e) {
+            $e->setParam("mgApiRegion");
+            throw $e;
+        }
+
+        if ($this->mailConfig->setValue("mgEurope", $apiRegion === "eu")) {
+            $changes++;
         }
     }
 

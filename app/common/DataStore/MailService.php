@@ -13,5 +13,4 @@ enum MailService: string
     case PAUSED = "paused"; // E-mails will be queued
     case SMTP = "smtp";
     case MAILGUN = "mailgun";
-    case SENDGRID = "sendgrid";
 }
