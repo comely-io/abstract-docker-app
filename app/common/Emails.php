@@ -22,6 +22,8 @@ use Comely\Mailer\Templating;
  */
 class Emails
 {
+    /** @var \App\Common\DataStore\MailService */
+    public readonly MailService $service;
     /** @var \Comely\Mailer\Mailer */
     public readonly Mailer $mailer;
     /** @var \Comely\Mailer\Templating */
@@ -38,6 +40,7 @@ class Emails
     {
         try {
             $mailConfig = MailConfig::getInstance(true);
+            $this->service = $mailConfig->service;
         } catch (AppModelNotFoundException) {
             throw new AppException('Cannot instantiate Emails; MailConfig is not set');
         }
@@ -110,13 +113,21 @@ class Emails
      * @param \Comely\Mailer\Message $message
      * @param string $recipient
      * @param bool $dispatch
-     * @return \App\Common\Misc\QueuedMail
+     * @return \App\Common\Misc\QueuedMail|null
      * @throws \App\Common\Exception\AppException
      * @throws \Comely\Database\Exception\DatabaseException
      * @throws \Comely\Mailer\Exception\EmailMessageException
      */
-    public function queueDispatch(Message $message, string $recipient, bool $dispatch = true): QueuedMail
+    public function queueDispatch(Message $message, string $recipient, bool $dispatch = true): ?QueuedMail
     {
+        if ($this->service === MailService::DISABLED) {
+            return null;
+        }
+
+        if ($dispatch && $this->service === MailService::PAUSED) {
+            $dispatch = false;
+        }
+
         $compiledMime = $message->compile();
         $compiledLen = strlen($compiledMime->compiled);
         if ($compiledLen > (5 * 1048576)) {
