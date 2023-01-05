@@ -5,6 +5,7 @@ namespace App\Services\Public\Controllers;
 
 use App\Common\Database\PublicAPI\QueriesPayload;
 use App\Common\DataStore\PublicAPIAccess;
+use App\Common\Emails;
 use App\Common\Exception\AppControllerException;
 use App\Common\Kernel\ErrorHandler\Errors;
 use App\Common\Kernel\Http\Controllers\AbstractAppController;
@@ -53,9 +54,11 @@ abstract class AbstractPublicAPIController extends AbstractAppController
     /** @var array */
     protected readonly array $httpHeaderAuth;
     /** @var Query|null */
-    protected ?Query $queryLog = null;
+    public ?Query $queryLog = null;
     /** @var ResourceLock|null */
-    protected ?ResourceLock $semaphoreIPLock = null;
+    public ?ResourceLock $semaphoreIPLock = null;
+    /** @var \App\Common\Emails|null */
+    protected ?Emails $emails = null;
 
     /**
      * @return void
@@ -128,6 +131,17 @@ abstract class AbstractPublicAPIController extends AbstractAppController
     }
 
     /**
+     * @throws \App\Common\Exception\AppDirException
+     * @throws \App\Common\Exception\AppException
+     * @throws \Comely\Filesystem\Exception\PathException
+     * @throws \Comely\Mailer\Exception\MailerException
+     */
+    protected function initEmailsComponent(): void
+    {
+        $this->emails = new Emails($this->aK);
+    }
+
+    /**
      * @param bool $status
      * @return $this
      */
@@ -191,7 +205,7 @@ abstract class AbstractPublicAPIController extends AbstractAppController
                     $encryptedPayload = $publicAPIService->ciphers->secondary()->encrypt($queryPayload);
                     $queryLog->resLen = $encryptedPayload->len();
                     $queryLog->set("checksum", $queryLog->checksum()->raw());
-                    $this->queryLog->query()->where("id", $this->queryLog->id)->update();
+                    $controller->queryLog->query()->where("id", $controller->queryLog->id)->update();
 
                     $publicAPIService->db->apiLogs()->query()->table(QueriesPayload::TABLE)->insert([
                         "query" => $queryLog->id,
