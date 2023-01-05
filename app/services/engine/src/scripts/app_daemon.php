@@ -34,7 +34,7 @@ class app_daemon extends AbstractCLIScript
      */
     public function exec(): void
     {
-        parent::exec(); // inheritance call for Sempahore process locking
+        parent::exec(); // inheritance call for Semaphore process locking
 
         $db = $this->aK->db->primary();
         Schema::Bind($db, 'App\Common\Database\Primary\DbBackups');

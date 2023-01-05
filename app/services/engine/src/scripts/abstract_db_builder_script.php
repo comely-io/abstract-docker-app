@@ -30,6 +30,7 @@ abstract class abstract_db_builder_script extends AbstractCLIScript
             'App\Common\Database\Primary\Administrators',
             'App\Common\Database\Primary\Admin\Logs',
             'App\Common\Database\Primary\Admin\Sessions',
+            'App\Common\Database\Primary\MailsQueue',
             'App\Common\Database\Primary\DataStore',
             'App\Common\Database\Primary\DbBackups',
             'App\Common\Database\Primary\ProcessTracker',

@@ -131,13 +131,22 @@ abstract class AbstractPublicAPIController extends AbstractAppController
     }
 
     /**
+     * @return void
      * @throws \App\Common\Exception\AppDirException
      * @throws \App\Common\Exception\AppException
+     * @throws \Comely\Database\Exception\DbConnectionException
      * @throws \Comely\Filesystem\Exception\PathException
      * @throws \Comely\Mailer\Exception\MailerException
      */
     protected function initEmailsComponent(): void
     {
+        if ($this->emails) {
+            return;
+        }
+
+        $db = $this->aK->db->primary();
+        Schema::Bind($db, 'App\Common\Database\Primary\MailsQueue');
+
         $this->emails = new Emails($this->aK);
     }
 

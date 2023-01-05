@@ -16,6 +16,7 @@
     "comely-io/sessions": "2.0.0",
     "comely-io/utils": "2.0.6",
     "comely-io/yaml": "2.0.0",
+    "comely-io/mailer": "2.1.1",
     "furqansiddiqui/semaphore-emulator-php": "0.2.0"
   },
   "autoload": {
