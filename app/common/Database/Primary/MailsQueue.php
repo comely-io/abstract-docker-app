@@ -27,7 +27,7 @@ class MailsQueue extends AbstractAppTable
         $cols->enum("status")->options("sent", "queued", "exhausted");
         $cols->string("email")->length(80);
         $cols->string("subject")->length(128);
-        $cols->binary("blob")->length(5242880)->nullable(); // Up to 5MiB
+        $cols->blob("blob")->size("medium")->nullable();
         $cols->int("added_on")->bytes(4)->unSigned();
         $cols->int("attempts")->bytes(1)->unSigned()->default(0);
         $cols->int("last_attempt")->bytes(4)->unSigned()->nullable();
