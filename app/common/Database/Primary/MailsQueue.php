@@ -23,6 +23,8 @@ class MailsQueue extends AbstractAppTable
      */
     public function structure(Columns $cols, Constraints $constraints): void
     {
+        $cols->defaults("ascii", "ascii_general_ci");
+
         $cols->int("id")->bytes(4)->unSigned()->autoIncrement();
         $cols->enum("status")->options("sent", "queued", "exhausted");
         $cols->string("email")->length(80);
