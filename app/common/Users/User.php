@@ -195,7 +195,7 @@ class User extends AbstractAppModel
      */
     public function hasTag(string $tag): bool
     {
-        return in_array(strtolower(trim($tag)), $this->_tags);
+        return in_array(strtolower(trim($tag)), array_map("strtolower", $this->_tags));
     }
 
     /**
