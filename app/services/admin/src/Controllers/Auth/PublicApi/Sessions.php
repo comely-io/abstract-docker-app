@@ -215,7 +215,7 @@ class Sessions extends AuthAdminAPIController
                 }
 
                 if (Validator::isValidIP($ipAddress, true)) { // Complete IP address
-                    $whereQuery = '`ip_address`=?';
+                    $whereQuery[] = '`ip_address`=?';
                     $whereData[] = $ipAddress;
                 } else { // Incomplete IP address
                     $whereQuery[] = '`ip_address` LIKE ?';
