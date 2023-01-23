@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Services\Admin\Controllers\Auth\PublicApi;
 
+use App\Common\Database\Primary\Users;
 use App\Common\PublicAPI\Session;
 use App\Common\Validator;
 use App\Services\Admin\Controllers\Auth\AuthAdminAPIController;
@@ -27,6 +28,9 @@ class Sessions extends AuthAdminAPIController
     {
         $apiLogsDb = $this->aK->db->apiLogs();
         Schema::Bind($apiLogsDb, 'App\Common\Database\PublicAPI\Sessions');
+
+        $db = $this->aK->db->primary();
+        Schema::Bind($db, 'App\Common\Database\Primary\Users');
     }
 
     /**
@@ -181,6 +185,25 @@ class Sessions extends AuthAdminAPIController
             case "just":
                 $whereQuery[] = "`archived`=1";
                 break;
+        }
+
+        // Authenticated User
+        $user = strtolower($this->input()->getASCII("user"));
+        if ($user) {
+            try {
+                try {
+                    /** @var \App\Common\Users\User $user */
+                    $user = Users::Find()->query('WHERE (`username`=:user OR `email`=:user OR `phone`=:user)', ["user" => $user])->first();
+                } catch (ORM_ModelNotFoundException) {
+                    throw new AdminAPIException('No such user account exists');
+                }
+
+                $whereQuery[] = "`auth_user_id`=?";
+                $whereData[] = $user->id;
+            } catch (AdminAPIException $e) {
+                $e->setParam("user");
+                throw $e;
+            }
         }
 
         // IP Address
