@@ -113,6 +113,66 @@ class Users extends AbstractAppTable
     }
 
     /**
+     * @param int ...$userIds
+     * @return array
+     */
+    public static function CachedUsernames(int ...$userIds): array
+    {
+        $userIds = array_unique($userIds);
+        $aK = AppKernel::getInstance();
+        $usernames = [];
+        $searchInDb = [];
+
+        // Check in cache first
+        foreach ($userIds as $userId) {
+            // Cached Username
+            try {
+                $username = $aK->cache->get(sprintf("u_username_%d", $userId));
+            } catch (CacheException) {
+            }
+
+            if (isset($username) && Validator::isValidUsername($username)) {
+                $usernames[$userId] = $username;
+                continue;
+            }
+
+            $searchInDb[] = $userId;
+        }
+
+        // Check in DB
+        if (!$searchInDb) {
+            return $usernames;
+        }
+
+        try {
+            $users = $aK->db->primary()
+                ->fetch(sprintf('SELECT ' . '`id`,`username` FROM `%s` WHERE `id` IN (%s)', Users::TABLE, implode(",", $searchInDb)))
+                ->all();
+        } catch (DatabaseException $e) {
+            $aK->errors->triggerIfDebug($e, E_USER_WARNING);
+        }
+
+        if (isset($users) && $users) {
+            foreach ($users as $user) {
+                if (isset($user["id"], $user["username"]) && is_string($user["username"]) && Validator::isValidUsername($user["username"])) {
+                    $userId = intval($user["id"]);
+                    $username = $usernames["username"];
+                    $usernames[$userId] = $username;
+
+                    try {
+                        $aK->cache->set(sprintf("u_username_%d", $userId), $username, static::CACHE_TTL * 7);
+                    } catch (CacheException $e) {
+                        $aK->errors->triggerIfDebug($e, E_USER_WARNING);
+                        $aK->errors->trigger('Failed to store username in cache', E_USER_WARNING);
+                    }
+                }
+            }
+        }
+
+        return $usernames;
+    }
+
+    /**
      * @param int $userId
      * @return string
      * @throws AppException

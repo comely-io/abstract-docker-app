@@ -39,11 +39,34 @@ class Users extends AuthAdminAPIController
 
     /**
      * @return void
+     * @throws \App\Services\Admin\Exception\AdminAPIException
+     */
+    private function getCachedUsernames(): void
+    {
+        $ids = array_unique(explode(",", trim($this->input()->getASCII("id"))));
+        if (!$ids) {
+            throw AdminAPIException::Param("id", "No user IDs received");
+        }
+
+        $usernames = \App\Common\Database\Primary\Users::CachedUsernames(...$ids);
+
+        $this->status(true);
+        $this->response->set("usernames", $usernames);
+    }
+
+    /**
+     * @return void
      * @throws AdminAPIException
      * @throws AppException
      */
     public function get(): void
     {
+        // Action: Usernames?
+        if (strtolower($this->input()->getASCII("action")) === "usernames") {
+            $this->getCachedUsernames();
+            return;
+        }
+
         // Where Query
         $whereQuery = [];
         $whereData = [];
