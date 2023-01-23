@@ -102,7 +102,7 @@ class Sessions extends AuthAdminAPIController
             "userAgent" => $session->userAgent,
             "fingerprint" => bin2hex($session->fingerprint),
             "authUserId" => $session->authUserId,
-            "authSessionOtp" => $session->authSessionOtp,
+            "authSessionOtp" => $session->authSessionOtp === 1,
             "last2faOn" => $session->last2faOn,
             "lastRecaptchaOn" => $session->lastRecaptchaOn,
             "issuedOn" => $session->issuedOn,
