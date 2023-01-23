@@ -301,7 +301,7 @@ class Sessions extends AuthAdminAPIController
 
             try {
                 $session = new Session($row);
-                $sessions[] = $session;
+                $sessions[] = $this->getSessionPublicArray($session);
             } catch (\Exception $e) {
                 $this->aK->errors->trigger($e, E_USER_WARNING);
                 continue;
