@@ -13,8 +13,6 @@ use Comely\Buffer\Buffer;
 /**
  * Class Session
  * @package App\Common\PublicAPI
- * @property bool|null $checksumHealth
- * @property string|null $partialToken
  */
 class Session extends AbstractAppModel
 {
@@ -60,13 +58,14 @@ class Session extends AbstractAppModel
         }
 
         $raw = sprintf(
-            "%d:%s:%s:%d:%d:%s:%d:%d",
+            "%d:%s:%s:%d:%d:%s:%s:%d:%d",
             $this->id,
             strtolower($this->type),
             $token,
             $this->authUserId ?? 0,
             $this->authSessionOtp ?? 0,
             strtolower($this->ipAddress),
+            $this->fingerprint,
             $this->issuedOn,
             $this->lastUsedOn
         );
