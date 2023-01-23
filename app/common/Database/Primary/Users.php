@@ -160,7 +160,7 @@ class Users extends AbstractAppTable
             foreach ($users as $user) {
                 if (isset($user["id"], $user["username"]) && is_string($user["username"]) && Validator::isValidUsername($user["username"])) {
                     $userId = intval($user["id"]);
-                    $username = $usernames["username"];
+                    $username = $user["username"];
                     $usernames[$userId] = $username;
 
                     try {
