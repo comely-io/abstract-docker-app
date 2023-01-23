@@ -125,6 +125,10 @@ class Users extends AbstractAppTable
 
         // Check in cache first
         foreach ($userIds as $userId) {
+            if ($userId <= 0) {
+                continue;
+            }
+
             // Cached Username
             try {
                 $username = $aK->cache->get(sprintf("u_username_%d", $userId));
