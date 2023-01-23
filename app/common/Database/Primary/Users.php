@@ -113,10 +113,10 @@ class Users extends AbstractAppTable
     }
 
     /**
-     * @param int ...$userIds
+     * @param int|string ...$userIds
      * @return array
      */
-    public static function CachedUsernames(int ...$userIds): array
+    public static function CachedUsernames(int|string ...$userIds): array
     {
         $userIds = array_unique($userIds);
         $aK = AppKernel::getInstance();

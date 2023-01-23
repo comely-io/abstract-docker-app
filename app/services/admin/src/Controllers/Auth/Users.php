@@ -43,7 +43,7 @@ class Users extends AuthAdminAPIController
      */
     private function getCachedUsernames(): void
     {
-        $ids = array_filter(array_unique(explode(",", trim($this->input()->getASCII("id")))), "intval");
+        $ids = array_unique(explode(",", trim($this->input()->getASCII("id"))));
         if (!$ids) {
             throw AdminAPIException::Param("id", "No user IDs received");
         }
