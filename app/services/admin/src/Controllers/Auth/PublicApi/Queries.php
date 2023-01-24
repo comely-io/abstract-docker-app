@@ -294,11 +294,11 @@ class Queries extends AuthAdminAPIController
         }
 
         if ($query->startOn && $query->endOn) {
-            $queryTimespan = bcsub(strval($query->startOn), strval($query->endOn), 4);
+            $queryTimespan = bcsub(strval($query->endOn), strval($query->startOn), 4);
         }
 
         if ($query->flagUserId) {
-            $queryFlagusername = Users::CachedUsername($query->flagUserId);
+            $queryFlagUsername = Users::CachedUsername($query->flagUserId);
         }
 
         try {
@@ -308,7 +308,7 @@ class Queries extends AuthAdminAPIController
         }
 
         $query["timespan"] = $queryTimespan ?? null;
-        $query["flagUsername"] = $queryFlagusername ?? null;
+        $query["flagUsername"] = $queryFlagUsername ?? null;
         if (isset($payload) && !$payloadError) {
             $query["payload"] = $payload->array();
         } else {
