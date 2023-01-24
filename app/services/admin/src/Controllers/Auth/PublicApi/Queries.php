@@ -48,6 +48,52 @@ class Queries extends AuthAdminAPIController
         $this->response->set("count", (int)$countQuery["count(*)"]);
     }
 
+    private function searchQueries(): void
+    {
+        // Where Query
+        $whereQuery = [];
+        $whereData = [];
+
+        // Endpoint
+        $endpoint = strtolower($this->input()->getASCII("endpoint"));
+        if ($endpoint || $endpoint !== "/") {
+            try {
+                if (!preg_match('/^(\/[\w-]+)+$/', $endpoint)) {
+
+                }
+
+            } catch (AdminAPIException $e) {
+                $e->setParam("endpoint");
+                throw $e;
+            }
+        }
+
+        // HTTP Method
+        $method = strtolower($this->input()->getASCII("method"));
+        if ($method) {
+            try {
+                if (!in_array($method, ["post", "get", "put", "delete"])) {
+                    throw new AdminAPIException('Invalid HTTP method to search for');
+                }
+
+                $whereQuery[] = "`method`=?";
+                $whereData[] = $method;
+            } catch (AdminAPIException $e) {
+                $e->setParam("method");
+                throw $e;
+            }
+        }
+
+        try {
+
+        } catch (AdminAPIException $e) {
+            $e->setParam("endpoint");
+            throw $e;
+        }
+
+
+    }
+
     public function get(): void
     {
         switch (strtolower($this->input()->getASCII("action"))) {
@@ -56,6 +102,7 @@ class Queries extends AuthAdminAPIController
                 return;
             case "search":
             case "query":
+                $this->searchQueries();
                 return;
             default:
                 throw new AdminAPIException('Invalid "action" parameter called');

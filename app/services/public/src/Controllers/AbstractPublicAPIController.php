@@ -178,7 +178,7 @@ abstract class AbstractPublicAPIController extends AbstractAppController
             $this->queryLog->set("checksum", "tba");
             $this->queryLog->ipAddress = $this->ipAddress;
             $this->queryLog->method = $this->request->method->toString();
-            $this->queryLog->endpoint = $this->request->url->complete;
+            $this->queryLog->endpoint = $this->request->url->path;
             $this->queryLog->startOn = microtime(true);
             $this->queryLog->endOn = doubleval(0);
             $this->queryLog->query()->insert();
