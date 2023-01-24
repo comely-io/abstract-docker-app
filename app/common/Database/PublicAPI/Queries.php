@@ -36,13 +36,13 @@ class Queries extends AbstractAppTable
         $cols->double("end_on")->precision(14, 4)->unSigned();
         $cols->int("res_code")->bytes(2)->unSigned()->nullable();
         $cols->int("res_len")->bytes(4)->unSigned()->nullable();
-        $cols->binary("flag_api_sess")->fixed(32)->nullable();
+        $cols->int("flag_api_sess")->bytes(8)->unSigned()->nullable();
         $cols->int("flag_user_id")->bytes(4)->unSigned()->nullable();
         $cols->primaryKey("id");
 
         // Foreign Keys
         $primaryDBName = $this->aK->config->db->get(Databases::PRIMARY)?->dbname;
-        $constraints->foreignKey("flag_api_sess")->table(Sessions::TABLE, "token");
+        $constraints->foreignKey("flag_api_sess")->table(Sessions::TABLE, "id");
         $constraints->foreignKey("flag_user_id")->database($primaryDBName)->table(Users::TABLE, "id");
     }
 }

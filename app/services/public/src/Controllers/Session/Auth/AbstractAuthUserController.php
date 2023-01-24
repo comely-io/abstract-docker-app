@@ -66,6 +66,10 @@ abstract class AbstractAuthUserController extends AbstractSessionAPIController
         }
 
         $this->user = Users::Get(id: $this->session->authUserId, useCache: true);
+        if ($this->queryLog) {
+            $this->queryLog->flagUserId = $this->user->id;
+        }
+
         $this->user->validateChecksum();
 
         // User status check

@@ -192,12 +192,11 @@ abstract class AbstractPublicAPIController extends AbstractAppController
 
         // Enable output buffer
         $publicAPIService = $this->aK;
-        $controller = $this;
         if (!ob_start()) {
             throw new PublicAPIException('Failed to initialise output buffer');
         }
 
-        register_shutdown_function(function () use ($controller, $publicAPIService) {
+        register_shutdown_function(function () use ($publicAPIService) {
             $buffered = ob_get_contents();
             if (!$buffered) {
                 $buffered = null;
@@ -206,15 +205,15 @@ abstract class AbstractPublicAPIController extends AbstractAppController
             ob_end_clean();
 
             try {
-                $queryLog = $controller->queryLog();
+                $queryLog = $this->queryLog();
                 if ($queryLog) {
-                    $queryLog->resCode = $controller->response->getHttpStatusCode();
+                    $queryLog->resCode = $this->response->getHttpStatusCode();
                     $queryLog->endOn = microtime(true);
-                    $queryPayload = new QueryPayload($queryLog, $controller, $buffered);
+                    $queryPayload = new QueryPayload($queryLog, $this, $buffered);
                     $encryptedPayload = $publicAPIService->ciphers->secondary()->encrypt($queryPayload);
                     $queryLog->resLen = $encryptedPayload->len();
                     $queryLog->set("checksum", $queryLog->checksum()->raw());
-                    $controller->queryLog->query()->where("id", $controller->queryLog->id)->update();
+                    $this->queryLog->query()->where("id", $this->queryLog->id)->update();
 
                     $publicAPIService->db->apiLogs()->query()->table(QueriesPayload::TABLE)->insert([
                         "query" => $queryLog->id,

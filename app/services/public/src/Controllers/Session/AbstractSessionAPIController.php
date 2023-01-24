@@ -174,6 +174,9 @@ abstract class AbstractSessionAPIController extends AbstractPublicAPIController
 
         // Set the instance
         $this->session = $session;
+        if ($this->queryLog) {
+            $this->queryLog->flagApiSess = $session->id;
+        }
     }
 
     /**
