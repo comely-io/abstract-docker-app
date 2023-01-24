@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Common;
 
-use App\Common\Exception\AppException;
 use Comely\Security\Passwords;
 use Comely\Utils\UTF8\UTF8Charset;
 use Comely\Utils\Validator\ASCII_Validator;
