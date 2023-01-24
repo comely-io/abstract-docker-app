@@ -76,7 +76,7 @@ class Queries extends AuthAdminAPIController
 
         // Endpoint
         $endpoint = strtolower($this->input()->getASCII("endpoint"));
-        if ($endpoint || $endpoint !== "/") {
+        if ($endpoint && $endpoint !== "/") {
             try {
                 if (!preg_match('/^(\/[\w\-.]+)+$/', $endpoint)) {
                     throw new AdminAPIException('Invalid endpoint/path');
