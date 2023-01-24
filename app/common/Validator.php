@@ -99,11 +99,16 @@ class Validator
 
     /**
      * @param mixed $email
+     * @param int $maxLen
      * @return bool
      */
-    public static function isValidEmailAddress(mixed $email): bool
+    public static function isValidEmailAddress(mixed $email, int $maxLen = 64): bool
     {
         if (!is_string($email) || !$email) {
+            return false;
+        }
+
+        if ($maxLen > 0 && strlen($email) > $maxLen) {
             return false;
         }
 
