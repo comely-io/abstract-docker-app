@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Services\Admin\Controllers\Auth\PublicApi;
 
 use App\Common\Database\Primary\Users;
+use App\Common\Exception\AppModelNotFoundException;
 use App\Common\PublicAPI\Session;
 use App\Common\Validator;
 use App\Services\Admin\Controllers\Auth\AuthAdminAPIController;
@@ -188,13 +189,16 @@ class Sessions extends AuthAdminAPIController
         }
 
         // Authenticated User
-        $user = strtolower($this->input()->getASCII("user"));
-        if ($user) {
+        $username = strtolower($this->input()->getASCII("user"));
+        if ($username) {
             try {
+                if (!Validator::isValidUsername($username)) {
+                    throw new AdminAPIException('Invalid username');
+                }
+
                 try {
-                    /** @var \App\Common\Users\User $user */
-                    $user = Users::Find()->query('WHERE (`username`=:user OR `email`=:user OR `phone`=:user)', ["user" => $user])->first();
-                } catch (ORM_ModelNotFoundException) {
+                    $user = Users::Get(username: $username, useCache: true);
+                } catch (AppModelNotFoundException) {
                     throw new AdminAPIException('No such user account exists');
                 }
 

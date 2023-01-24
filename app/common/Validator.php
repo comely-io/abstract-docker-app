@@ -248,11 +248,11 @@ class Validator
     }
 
     /**
-     * @param object $obj
+     * @param object|array $obj
      * @return array
      * @throws \JsonException
      */
-    public static function JSON_Filter(object $obj): array
+    public static function JSON_Filter(object|array $obj): array
     {
         return json_decode(
             json_encode($obj, JSON_THROW_ON_ERROR),
