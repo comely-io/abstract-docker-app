@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Services\Public\Controllers;
 
+use App\Common\AppConstants;
 use App\Common\Database\PublicAPI\QueriesPayload;
 use App\Common\DataStore\PublicAPIAccess;
 use App\Common\Emails;
@@ -195,6 +196,8 @@ abstract class AbstractPublicAPIController extends AbstractAppController
         if (!ob_start()) {
             throw new PublicAPIException('Failed to initialise output buffer');
         }
+
+        $this->response->headers->set(AppConstants::PUBLIC_API_RESPONSE_TRACE_HEADER, dechex($this->queryLog->id));
 
         register_shutdown_function(function () use ($publicAPIService) {
             $buffered = ob_get_contents();
