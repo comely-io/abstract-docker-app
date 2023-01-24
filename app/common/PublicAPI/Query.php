@@ -27,8 +27,8 @@ class Query extends AbstractAppModel
     public string $endpoint;
     /** @var float */
     public float $startOn;
-    /** @var float */
-    public float $endOn;
+    /** @var float|null */
+    public ?float $endOn = null;
     /** @var null|int */
     public ?int $resCode = null;
     /** @var null|int */

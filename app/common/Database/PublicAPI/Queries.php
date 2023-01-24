@@ -33,7 +33,7 @@ class Queries extends AbstractAppTable
         $cols->string("method")->length(8);
         $cols->string("endpoint")->length(512);
         $cols->double("start_on")->precision(14, 4)->unSigned();
-        $cols->double("end_on")->precision(14, 4)->unSigned();
+        $cols->double("end_on")->precision(14, 4)->unSigned()->nullable();
         $cols->int("res_code")->bytes(2)->unSigned()->nullable();
         $cols->int("res_len")->bytes(4)->unSigned()->nullable();
         $cols->int("flag_api_sess")->bytes(8)->unSigned()->nullable();
