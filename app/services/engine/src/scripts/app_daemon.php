@@ -339,8 +339,7 @@ class app_daemon extends AbstractCLIScript
         $this->inline("Purging {magenta}Public API Queries{/} ");
         if ($this->systemConfig->publicAPIQueriesPurge > 0) {
             $this->inline(sprintf("older than {green}{invert} %d {/} days:", $this->systemConfig->publicAPIQueriesPurge));
-            // $pruneTs = $timeStamp - ($this->systemConfig->publicAPIQueriesPurge * 86400);
-            $pruneTs = $timeStamp - 300; //Todo: temp 5-min setting
+            $pruneTs = $timeStamp - ($this->systemConfig->publicAPIQueriesPurge * 86400);
             $pruneFromId = $apiLogsDb->fetch(
                 sprintf("SELECT " . "* FROM `%s` WHERE `start_on`<=? ORDER BY `id` DESC LIMIT 1", Queries::TABLE),
                 [$pruneTs]
