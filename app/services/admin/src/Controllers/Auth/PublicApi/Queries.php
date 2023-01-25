@@ -293,10 +293,6 @@ class Queries extends AuthAdminAPIController
             $payloadError = $e->getMessage();
         }
 
-        if ($query->startOn && $query->endOn) {
-            $queryTimespan = bcsub(strval($query->endOn), strval($query->startOn), 4);
-        }
-
         if ($query->flagUserId) {
             $queryFlagUsername = Users::CachedUsername($query->flagUserId);
         }
@@ -307,7 +303,6 @@ class Queries extends AuthAdminAPIController
             throw new AdminAPIException('Failed to pass JSON filter to query object');
         }
 
-        $query["timespan"] = $queryTimespan ?? null;
         $query["flagUsername"] = $queryFlagUsername ?? null;
         if (isset($payload) && !$payloadError) {
             $query["payload"] = $payload->array();

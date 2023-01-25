@@ -40,6 +40,19 @@ class Query extends AbstractAppModel
 
     /** @var bool|null */
     public ?bool $checksumVerified = null;
+    /** @var string|null */
+    public ?string $timespan = null;
+
+    /**
+     * @return void
+     */
+    public function onLoad(): void
+    {
+        parent::onLoad();
+        if ($this->endOn) {
+            $this->timespan = bcsub(strval($this->endOn), strval($this->startOn), 4);
+        }
+    }
 
     /**
      * @return void
