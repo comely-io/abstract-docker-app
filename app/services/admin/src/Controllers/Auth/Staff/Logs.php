@@ -14,7 +14,7 @@ use App\Services\Admin\Exception\AdminAPIException;
 class Logs extends AuthAdminAPIController
 {
     /** @var int[] */
-    private const PER_PAGE_OPTS = [5, 10, 25, 50, 100];
+    private const PER_PAGE_OPTS = [25, 50, 100];
 
     protected function authCallback(): void
     {
