@@ -49,7 +49,7 @@ class EnvConfig
             return \App\Common\Validator::isValidHostname($hostname, allowIpAddr: false) ? $hostname : false;
         });
 
-        $portValidator = Validator::Integer()->range(1000, 0xffff);
+        $portValidator = Validator::Integer()->range(80, 0xffff);
 
         // Admin API Server/Hostname & Port
         try {
