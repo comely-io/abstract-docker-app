@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Services\Public\Controllers\Session;
 
 use App\Common\Database\Primary\Users;
+use App\Services\Public\Exception\PublicAPIException;
 use App\Services\Public\PublicUserAccount;
 use Comely\Database\Schema;
 
@@ -45,7 +46,13 @@ class Meta extends AbstractSessionAPIController
         if ($this->session->authUserId) {
             $authUser = Users::Get(id: $this->session->authUserId, useCache: true);
             $authUser->validateChecksum();
-            $authUserData = new PublicUserAccount($authUser);
+
+            if (substr(strval($authUser->private($this->session->type . "AuthToken")), 0, 32) === $this->session->private("token")) {
+                $authUserData = new PublicUserAccount($authUser);
+            } else {
+                // User has possibly logged in elsewhere
+                throw new PublicAPIException('SESSION_REDUNDANT');
+            }
         }
 
         $this->status(true);
