@@ -201,9 +201,7 @@ class Users extends AuthAdminAPIController
                 $user = new User($row);
                 try {
                     $user->validateChecksum();
-                    $user->checksumVerified = true;
                 } catch (AppException) {
-                    $user->checksumVerified = false;
                 }
 
                 $users[] = $user;

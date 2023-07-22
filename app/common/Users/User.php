@@ -18,9 +18,6 @@ use Comely\Security\Exception\CipherException;
 /**
  * Class User
  * @package App\Common\Users
- * @property string|null $referrerUsername
- * @property int|null $referralsCount
- * @property bool|null $checksumVerified
  */
 class User extends AbstractAppModel
 {
@@ -56,8 +53,8 @@ class User extends AbstractAppModel
 
     /** @var Cipher|null */
     private ?Cipher $_cipher = null;
-    /** @var bool|null */
-    private ?bool $_checksumValidated = null;
+    /** @var bool */
+    public bool $_checksumValidated = false;
     /** @var array */
     private array $_tags = [];
     /** @var Credentials|null */
@@ -66,6 +63,11 @@ class User extends AbstractAppModel
     private ?UserParams $_params = null;
     /** @var UserBaggage|null */
     private ?UserBaggage $_baggage = null;
+
+    /** @var string|null */
+    public ?string $referrerUsername = null;
+    /** @var int|null */
+    public ?int $referralsCount = null;
 
     /**
      * @return void
@@ -163,14 +165,6 @@ class User extends AbstractAppModel
         }
 
         $this->_checksumValidated = true;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isChecksumValidated(): bool
-    {
-        return (bool)$this->_checksumValidated;
     }
 
     /**

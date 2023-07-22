@@ -12,10 +12,6 @@ use Comely\Security\Exception\CipherException;
 /**
  * Class Profile
  * @package App\Common\Users
- * @property bool $isRegistered
- * @property bool $checksumValidated
- * @property int|null $dobTs
- * @property int|null $dobDate
  */
 class Profile extends AbstractAppModel
 {
@@ -45,6 +41,15 @@ class Profile extends AbstractAppModel
     /** @var string|null */
     public ?string $state = null;
 
+    /** @var bool */
+    public bool $_checksumValidated = false;
+    /** @var bool */
+    public bool $isRegistered = false;
+    /** @var int|null  */
+    public ?int $dobTs = null;
+    /** @var array|null  */
+    public ?array $dobDate = null;
+
     /**
      * @return void
      * @throws AppException
@@ -55,7 +60,7 @@ class Profile extends AbstractAppModel
             throw new AppException(sprintf('User profile %d checksum validation failed', $this->userId));
         }
 
-        $this->checksumValidated = true;
+        $this->_checksumValidated = true;
     }
 
     /**

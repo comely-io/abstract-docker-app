@@ -845,7 +845,7 @@ class User extends AuthAdminAPIController
     private function recomputeChecksum(): void
     {
         $user = $this->fetchUserObject(false);
-        if ($user->isChecksumValidated()) {
+        if ($user->_checksumValidated) {
             throw AdminAPIException::Param("action", "Checksum for this user is already OK");
         }
 
@@ -1122,9 +1122,7 @@ class User extends AuthAdminAPIController
             $user = Users::Get(id: $userId, useCache: false);
             try {
                 $user->validateChecksum();
-                $user->checksumVerified = true;
             } catch (AppException) {
-                $user->checksumVerified = false;
                 if ($validateChecksum) {
                     throw new AdminAPIException(sprintf('User %d checksum does not validate', $user->id));
                 }
